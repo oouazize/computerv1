@@ -1,19 +1,38 @@
 import { parseEquation } from "./parser";
 import { solveEquation } from "./solver";
+import * as readline from "readline";
 
 function main() {
 	// Get the input from command line arguments
 	const args = process.argv.slice(2);
 
-	if (args.length === 0) {
-		console.error("Error: No equation provided");
-		console.error('Usage: make run "5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0"');
+	if (args.length > 1) {
+		console.error("Usage: ./computor [equation]");
 		process.exit(1);
 	}
 
+	if (args.length === 0) {
+		// Create readline interface for user input
+		const rl = readline.createInterface({
+			input: process.stdin,
+			output: process.stdout,
+		});
+
+		// Prompt user for equation
+		rl.question("Enter your equation: ", (input) => {
+			rl.close();
+			processEquation(input);
+		});
+	} else {
+		// Process equation from command line argument
+		processEquation(args[0]);
+	}
+}
+
+function processEquation(equationStr: string) {
 	try {
 		// Parse the equation
-		const equation = parseEquation(args[0]);
+		const equation = parseEquation(equationStr);
 
 		// Solve the equation
 		const solution = solveEquation(equation);
@@ -50,8 +69,6 @@ function main() {
 	}
 }
 
-main();
-
 export function maxValue(values: number[]): number {
 	if (values.length === 0) return 0;
 
@@ -84,3 +101,5 @@ export function sqrt(value: number): number {
 
 	return x;
 }
+
+main();
