@@ -1,21 +1,5 @@
+import { absValue, maxValue } from ".";
 import { Equation, Term } from "./types";
-
-// Custom math utility functions to avoid using Math library
-function maxValue(values: number[]): number {
-	if (values.length === 0) return 0;
-
-	let max = values[0];
-	for (let i = 1; i < values.length; i++) {
-		if (values[i] > max) {
-			max = values[i];
-		}
-	}
-	return max;
-}
-
-function absValue(value: number): number {
-	return value < 0 ? -value : value;
-}
 
 export function parseEquation(input: string): Equation {
 	// Split the equation into left and right parts based on the equals sign

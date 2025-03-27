@@ -1,22 +1,17 @@
 import { Equation, Solution } from "./types";
 import { equationToString } from "./parser";
+import { absValue, sqrt } from ".";
 
-// Custom square root function to avoid using Math library
-function sqrt(value: number): number {
-	if (value < 0) return NaN;
-	if (value === 0) return 0;
+function formatComplex(real: number, imag: number): string {
+	real = parseFloat(real.toFixed(6));
+	imag = parseFloat(absValue(imag).toFixed(6));
 
-	let x = value;
-	let y = 1;
-
-	const epsilon = 0.00000001;
-
-	while (x - y > epsilon) {
-		x = (x + y) / 2;
-		y = value / x;
+	if (real === 0) {
+		return imag === 1 ? "i" : `${imag}i`;
+	} else {
+		const imagSign = imag === 0 ? "" : imag === 1 ? " + i" : ` + ${imag}i`;
+		return `${real}${imagSign}`;
 	}
-
-	return x;
 }
 
 export function solveEquation(equation: Equation): Solution {
@@ -94,13 +89,19 @@ export function solveEquation(equation: Equation): Solution {
 		const discriminant = b * b - 4 * a * c;
 
 		if (discriminant < 0) {
+			const realPart = -b / (2 * a);
+			const imagPart = sqrt(absValue(discriminant)) / (2 * a);
+
+			const solution1 = formatComplex(realPart, imagPart);
+			const solution2 = formatComplex(realPart, -imagPart);
+
 			return {
 				degree,
 				reducedForm,
-				solutions: null,
+				solutions: [solution1, solution2],
 				discriminant,
 				message:
-					"Discriminant is strictly negative, there are no real solutions.",
+					"Discriminant is strictly negative, the two complex solutions are:",
 			};
 		} else if (discriminant === 0) {
 			const solution = (-b / (2 * a)).toFixed(6).replace(/\.?0+$/, "");

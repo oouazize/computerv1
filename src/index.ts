@@ -7,9 +7,7 @@ function main() {
 
 	if (args.length === 0) {
 		console.error("Error: No equation provided");
-		console.error(
-			'Usage: node computor.js "5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0"'
-		);
+		console.error('Usage: make run "5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0"');
 		process.exit(1);
 	}
 
@@ -32,7 +30,14 @@ function main() {
 			if (solution.solutions.length === 1) {
 				console.log(`The solution is:\n${solution.solutions[0]}`);
 			} else if (solution.solutions.length > 1) {
-				console.log(solution.solutions.join("\n"));
+				// Check if we have complex solutions
+				if (solution.discriminant !== undefined && solution.discriminant < 0) {
+					console.log(
+						`The solutions are:\n${solution.solutions[0]}\n${solution.solutions[1]}`
+					);
+				} else {
+					console.log(solution.solutions.join("\n"));
+				}
 			}
 		}
 	} catch (error) {
@@ -46,3 +51,36 @@ function main() {
 }
 
 main();
+
+export function maxValue(values: number[]): number {
+	if (values.length === 0) return 0;
+
+	let max = values[0];
+	for (let i = 1; i < values.length; i++) {
+		if (values[i] > max) {
+			max = values[i];
+		}
+	}
+	return max;
+}
+
+export function absValue(value: number): number {
+	return value < 0 ? -value : value;
+}
+
+export function sqrt(value: number): number {
+	if (value < 0) return NaN;
+	if (value === 0) return 0;
+
+	let x = value;
+	let y = 1;
+
+	const epsilon = 0.00000001;
+
+	while (x - y > epsilon) {
+		x = (x + y) / 2;
+		y = value / x;
+	}
+
+	return x;
+}
